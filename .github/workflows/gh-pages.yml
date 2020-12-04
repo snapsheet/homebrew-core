@@ -1,6 +1,6 @@
 name: Publish Docs
 on:
-  pull_request:
+  push:
 jobs:
   pr-pull:
     runs-on: ubuntu-latest
