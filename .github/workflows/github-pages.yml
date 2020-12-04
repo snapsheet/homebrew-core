@@ -17,7 +17,7 @@ jobs:
         bundle exec yard doc
 
     - name: Deploy
-      uses: actions/github-pages-action@v3.7.3
+      uses: actions/github-pages@v3.7.3
       with:
         deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
         publish_dir: ./docs
