@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: ./with_rvm.dockerfile
     environment:
-      GITHUB_TOKEN: $GITHUB_TOKEN
+      HOMEBREW_GITHUB_API_TOKEN: $GITHUB_TOKEN
     volumes:
       - ./:/home/dev.user/homebrew-core
   test_without_rvm:
@@ -13,6 +13,6 @@ services:
       context: .
       dockerfile: ./without_rvm.dockerfile
     environment:
-      GITHUB_TOKEN: $GITHUB_TOKEN
+      HOMEBREW_GITHUB_API_TOKEN: $GITHUB_TOKEN
     volumes:
       - ./:/home/dev.user/homebrew-core
