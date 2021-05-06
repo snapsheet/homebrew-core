@@ -24,6 +24,22 @@ brew install <formula>
 
 ## Testing
 
+This project uses [docker compose](https://docs.docker.com/compose/) to create a development environment you can use for testing purposes.
+
+Build the development environments:
+```
+docker-compose build
+```
+
+This creates two services: one with RVM and installed ruby versions, and one without RVM.
+
+Both images have a user `dev.user` that mimics the profile formulae will be installed under. To open a shell as this user, run the following:
+```
+docker-compose run --rm test_with_rvm bash
+```
+
+After this, you should be able to run the following commands.
+
 ### Validation
 To validate that the package will work on your system, install the repository and run the following:
 ```
