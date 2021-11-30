@@ -15,6 +15,8 @@ USER ${USER_NAME}
 RUN mkdir ${APP_HOME}
 WORKDIR ${APP_HOME}
 
+RUN sudo chown -R ${USER_NAME} /home/linuxbrew/.linuxbrew
+
 # install RVM gpg key
 RUN sudo apt-get update \
   && sudo apt-get install -y dirmngr \

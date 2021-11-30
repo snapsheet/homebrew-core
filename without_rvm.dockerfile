@@ -14,3 +14,5 @@ RUN sudo useradd -ms /bin/bash ${USER_NAME} \
 USER ${USER_NAME}
 RUN mkdir ${APP_HOME}
 WORKDIR ${APP_HOME}
+
+RUN sudo chown -R ${USER_NAME} /home/linuxbrew/.linuxbrew
