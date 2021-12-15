@@ -8,11 +8,3 @@ services:
       HOMEBREW_GITHUB_API_TOKEN: $GITHUB_TOKEN
     volumes:
       - ./:/home/dev.user/homebrew-core
-  test_without_rvm:
-    build:
-      context: .
-      dockerfile: ./without_rvm.dockerfile
-    environment:
-      HOMEBREW_GITHUB_API_TOKEN: $GITHUB_TOKEN
-    volumes:
-      - ./:/home/dev.user/homebrew-core
