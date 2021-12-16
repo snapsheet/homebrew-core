@@ -19,7 +19,6 @@ class Tinker < Formula
   def setup_debug_tools
     Homebrew.install_gem_setup_path! 'pry'
     Homebrew.install_gem_setup_path! 'pry-byebug', executable: 'pry'
-    Homebrew.install_gem_setup_path! 'dotenv'
     require 'pry-byebug'
   end
 
@@ -99,6 +98,6 @@ class Tinker < Formula
   end
 
   test do
-    assert_match VERSION, shell_output("export TINKER_ENV='production';tinker --version")
+    assert_match TINKER_VERSION, shell_output("export TINKER_ENV='production';tinker --version")
   end
 end

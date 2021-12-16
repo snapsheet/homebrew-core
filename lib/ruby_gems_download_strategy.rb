@@ -39,12 +39,11 @@ class RubyGemsDownloadStrategy < AbstractDownloadStrategy
   def setup_debug_tools
     Homebrew.install_gem_setup_path! 'pry'
     Homebrew.install_gem_setup_path! 'pry-byebug', executable: 'pry'
-    Homebrew.install_gem_setup_path! 'dotenv'
-    # require 'dotenv/load'
     require 'pry-byebug'
   end
 
   def fetch
+    Homebrew.setup_gem_environment!
     ohai "Fetching #{name} from gem source"
     setup_debug_tools if Context.current.debug?
 

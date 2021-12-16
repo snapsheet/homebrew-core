@@ -1,9 +1,8 @@
 version: '3.8'
 services:
-  test_with_rvm:
+  cli:
     build:
       context: .
-      dockerfile: ./with_rvm.dockerfile
     environment:
       HOMEBREW_GITHUB_API_TOKEN: $GITHUB_TOKEN
     volumes:
