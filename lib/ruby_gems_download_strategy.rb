@@ -51,8 +51,6 @@ class RubyGemsDownloadStrategy < AbstractDownloadStrategy
     RubyGemsDownloadStrategy.gem_config_file do |config_path|
       HOMEBREW_CACHE.cd do
         system('gem', 'fetch', name, '--version', version, '--config-file', config_path)
-        # This is to pull down dependencies which needs HOMEBREW_GITHUB_API_TOKEN value
-        File.write('dependencies.bin', Net::HTTP.get(URI.parse("https://x-oauth-basic:#{ENV['HOMEBREW_GITHUB_API_TOKEN']}@rubygems.pkg.github.com/bodyshopbidsdotcom/api/v1/dependencies?gems=tinker")))
       end
     end
   end

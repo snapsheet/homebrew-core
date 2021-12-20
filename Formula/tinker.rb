@@ -98,6 +98,6 @@ class Tinker < Formula
   end
 
   test do
-    assert_match TINKER_VERSION, shell_output("export TINKER_ENV='production';tinker --version")
+    assert_match TINKER_VERSION, shell_output("TINKER_ENV=production tinker --version")
   end
 end

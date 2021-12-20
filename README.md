@@ -35,7 +35,7 @@ This creates one service with RVM and installed ruby versions.
 
 Image has a user `dev.user` that mimics the profile formulae will be installed under. To open a shell as this user, run the following:
 ```
-docker-compose run --rm cli bash
+docker-compose run --rm cli
 ```
 
 After this, you should be able to run the following commands.
