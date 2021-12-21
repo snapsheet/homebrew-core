@@ -31,11 +31,11 @@ Build the development environments:
 docker-compose build
 ```
 
-This creates two services: one with RVM and installed ruby versions, and one without RVM.
+This creates one service with RVM and installed ruby versions.
 
-Both images have a user `dev.user` that mimics the profile formulae will be installed under. To open a shell as this user, run the following:
+Image has a user `dev.user` that mimics the profile formulae will be installed under. To open a shell as this user, run the following:
 ```
-docker-compose run --rm test_with_rvm bash
+docker-compose run --rm cli
 ```
 
 After this, you should be able to run the following commands.
