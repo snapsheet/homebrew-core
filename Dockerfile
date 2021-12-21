@@ -19,7 +19,10 @@ RUN sudo chown -R ${USER_NAME} /home/linuxbrew/.linuxbrew
 
 # install RVM gpg key
 RUN sudo apt-get update \
-  && sudo apt-get install -y dirmngr \
+  && sudo apt-get install -y \
+    dirmngr \
+    build-essential \
+    cmake \
   && curl -sSL https://rvm.io/mpapis.asc | gpg --import -
 
 # install RVM's ordered dependencies and repos
