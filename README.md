@@ -1,6 +1,8 @@
 # Snapsheet Core Homebrew Tap
 This is a Homebrew tap for useful formulae used by engineers at Snapsheet.
 
+* [Explanation of how Homebrew works](https://www.quora.com/How-does-Homebrew-work-internally?share=1)
+
 ## Installation
 These packages require a GitHub token to be set up in your environment with the name `HOMEBREW_GITHUB_API_TOKEN`.
 

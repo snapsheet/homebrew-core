@@ -25,17 +25,10 @@ RUN sudo apt-get update \
     cmake \
   && curl -sSL https://rvm.io/mpapis.asc | gpg --import -
 
-# install RVM's ordered dependencies and repos
-RUN sudo apt-get install software-properties-common \
-  && sudo apt-add-repository -y ppa:rael-gc/rvm \
-  && sudo apt-get update \
-  && sudo apt-get install -y libfile-fcntllock-perl
+USER dev.user
 
-# installing RVM as the user causes the installation to behave differently than installing as root
-# install rvm, set the profile, and add to the group
-RUN sudo apt-get install -y rvm \
-  && sudo usermod -aG rvm ${USER_NAME}  \
-  && echo 'source /etc/profile.d/rvm.sh' >> ${USER_HOME}/.bashrc
-
-# install ruby 3.0.0 as default version, and set 2.6.6 as an alternative version
-RUN bash -c ". /etc/profile.d/rvm.sh && rvm install 3.0.0 --default && rvm install 2.6.6"
+# Install RVM in user space, as most would.
+RUN bash --login -c "curl -sSL https://get.rvm.io | bash \
+                    && source $HOME/.rvm/scripts/rvm \
+                    && rvm install 3.0.0 --default \
+                    && rvm install 2.6.6"
