@@ -41,10 +41,10 @@ class RubyGemsDownloadStrategy < AbstractDownloadStrategy
   end
 
   def run_as_user(command_string)
-    system(*bash_cmd(command_string))
+    system(*shell_cmd(command_string))
   end
 
-  def bash_cmd(command_string)
+  def shell_cmd(command_string)
     [ENV['SHELL'], '--login', '-c', command_string]
   end
 
