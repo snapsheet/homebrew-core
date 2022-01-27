@@ -2,30 +2,34 @@ FROM homebrew/brew
 
 ENV USER_NAME dev.user
 ENV USER_HOME /home/${USER_NAME}
-ENV APP_HOME ${USER_HOME}/homebrew-core
 
-# Create groups and a dev user to test with.
-RUN sudo useradd -ms /bin/bash ${USER_NAME} \
-  && sudo usermod -aG sudo ${USER_NAME} \
-  && sudo usermod -aG linuxbrew ${USER_NAME} \
-  && echo '%sudo ALL=(ALL) NOPASSWD:ALL'  | sudo EDITOR='tee -a' visudo
+USER root
 
-# set up user space
-USER ${USER_NAME}
-RUN mkdir ${APP_HOME}
-WORKDIR ${APP_HOME}
+# Create groups and a user to test with.
+RUN useradd -ms /bin/bash ${USER_NAME} \
+  && usermod -aG sudo ${USER_NAME} \
+  && usermod -aG linuxbrew ${USER_NAME} \
+  && echo '%sudo ALL=(ALL) NOPASSWD:ALL'  | EDITOR='tee -a' visudo
 
-RUN sudo chown -R ${USER_NAME} /home/linuxbrew/.linuxbrew
+RUN chown -R ${USER_NAME} /home/linuxbrew/.linuxbrew
 
-# install RVM gpg key
-RUN sudo apt-get update \
-  && sudo apt-get install -y \
+# Install RVM gpg key.
+RUN apt-get update \
+  && apt-get install -y \
     dirmngr \
     build-essential \
     cmake \
   && curl -sSL https://rvm.io/mpapis.asc | gpg --import -
 
-USER dev.user
+# Set up working directory.
+ENV APP_HOME ${USER_HOME}/homebrew-core
+RUN mkdir ${APP_HOME}
+WORKDIR ${APP_HOME}
+
+# Run following commands as user.
+USER ${USER_NAME}
+
+RUN brew update && brew upgrade
 
 # Install RVM in user space, as most would.
 RUN bash --login -c "curl -sSL https://get.rvm.io | bash \
