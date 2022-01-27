@@ -21,6 +21,19 @@ class Tinker < Formula
   license 'MIT'
   version TINKER_VERSION
 
+  # Build dependencies that will be used by RVM.
+  depends_on "autoconf" => :build
+  depends_on "automake" => :build
+  depends_on "coreutils" => :build
+  depends_on "libksba" => :build
+  depends_on "libtool" => :build
+  depends_on "libyaml" => :build
+  depends_on "openssl@1.1" => :build
+  depends_on "pkg-config" => :build
+  depends_on "readline" => :build
+  depends_on "zlib" => :build
+  
+
   # Get the system home directory for the user installing Tinker. Attempting to find the home via
   # +path = `echo $HOME`+ will return the temporary path used while running this formula (same as
   # returned by the +pwd+ method).
