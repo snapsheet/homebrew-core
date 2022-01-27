@@ -3,12 +3,17 @@
 # Resources: https://github.com/sportngin/brew-gem
 
 require_relative '../lib/ruby_gems_download_strategy'
+require_relative '../lib/ruby_manager'
+require_relative '../lib/debug_tools'
 require 'net/http'
 require 'uri'
 
 TINKER_VERSION = '0.2.1'.freeze
 
 class Tinker < Formula
+  include RubyManager
+  include DebugTools
+
   desc 'Install the Tinker toolset.'
   homepage 'https://github.com/bodyshopbidsdotcom/tinker'
   url('tinker', using: RubyGemsDownloadStrategy)
@@ -16,88 +21,123 @@ class Tinker < Formula
   license 'MIT'
   version TINKER_VERSION
 
-  def setup_debug_tools
-    Homebrew.install_gem_setup_path! 'pry'
-    Homebrew.install_gem_setup_path! 'pry-byebug', executable: 'pry'
-    require 'pry-byebug'
+  # Build dependencies that will be used by RVM.
+  depends_on "autoconf" => :build
+  depends_on "automake" => :build
+  depends_on "coreutils" => :build
+  depends_on "libksba" => :build
+  depends_on "libtool" => :build
+  depends_on "libyaml" => :build
+  depends_on "openssl@1.1" => :build
+  depends_on "pkg-config" => :build
+  depends_on "readline" => :build
+  depends_on "zlib" => :build
+  
+
+  # Get the system home directory for the user installing Tinker. Attempting to find the home via
+  # +path = `echo $HOME`+ will return the temporary path used while running this formula (same as
+  # returned by the +pwd+ method).
+  #
+  # @return [String] Path to the +$HOME+ of the user running the formula.
+  def user_home
+    @user_home ||= `eval echo ~$USER`.strip
   end
 
-  def install
-    if Context.current.debug?
-      setup_debug_tools
-      @tap = CoreTap.instance unless tap?
-    end
+  # Version of Ruby required to run Tinker. This is required for using the {RubyManager}.
+  #
+  # @return [String] Semantic version of Ruby runtime (+3.0.1+, etc).
+  def ruby_version
+    @ruby_version ||= metadata.required_ruby_version.to_s.split.last
+  end
 
-    # set GEM_HOME and GEM_PATH to make sure we package all the dependent gems
-    # together without accidently picking up other gems on the gem path since
-    # they might not be there if, say, we change to a different rvm gemset
-    ENV['GEM_HOME'] = prefix.to_s
-    ENV['GEM_PATH'] = prefix.to_s
+  # Metadata associated with the Tinker gem. Used to get dependencies, requirements, etc.
+  #
+  # @return [Object] Reference to metadata object loaded from a gem.
+  def metadata
+    @metadata ||= YAML.load(`tar -xOf #{tinker_gem_path} metadata.gz | gzip -dc`)
+  end
 
-    # Use /usr/local/bin at the front of the path instead of Homebrew shims,
-    # which mess with Ruby's own compiler config when building native extensions
-    ENV['PATH'] = ENV['PATH'].sub(HOMEBREW_SHIMS_PATH.to_s, '/usr/local/bin') if defined?(HOMEBREW_SHIMS_PATH)
+  # Find the path of the gem that will be installed by this formula.
+  #
+  # @return [String] Cached path to the installed gem.
+  def tinker_gem_path
+    @tinker_gem_path ||= HOMEBREW_CACHE.cd { "#{pwd}/#{name}-#{version}.gem" }
+  end
 
-    metadata = YAML.load(`tar -xOf #{name}-#{version}.gem metadata.gz | gzip -dc`)
-    ruby_version = metadata.required_ruby_version.to_s.split.last
-    ruby_bin = ''
+  def tinker_env_vars
+    ruby_environment.merge(
+      'PATH' => "#{ruby_environment['PATH']}:\#{ENV['PATH']}",
+      'TINKER_ENV' => 'production'
+    )
+  end
 
+  # Get the path to installed gems so we can include them in the Tinker runtime before execution.
+  #
+  # @return [Array] List of paths to the +lib+ directories of installed gem dependencies.
+  def installed_gem_lib_paths
+    ruby_lib_paths = Dir.glob("#{gem_path}/gems/*/lib")
+    # Need to fix the path for concurrent-ruby.
+    ccrb = ruby_lib_paths.select { |path| path.include?('concurrent-ruby') }.first
+    ruby_lib_paths.select { |path| !path.include?('concurrent-ruby') } + ["#{ccrb}/concurrent-ruby"]
+  end
+
+  # Use the methods in the {RubyManager} to create an environment for installing gems specifically
+  # for use with this formula.
+  def install_tinker_gem
     RubyGemsDownloadStrategy.gem_config_file do |_config_path|
       HOMEBREW_CACHE.cd do
-        install_cmd = [
-          'gem', 'install', cached_download,
-          '--no-document',
-          '--no-wrapper',
-          '--no-user-install',
-          '--install-dir', prefix,
-          '--bindir', bin
-        ]
-
-        `bash --login -c 'rvm install #{ruby_version}'`
-        `bash --login -c 'rvm use #{ruby_version} && #{install_cmd.join(' ')}'`
-        ruby_bin = `bash --login -c 'rvm use #{ruby_version} > /dev/null && which ruby'`.strip
+        with_env(ruby_environment) do
+          system('gem', 'install', cached_download)
+        end
       end
+
+      raise "gem install #{name} failed with status #{$?.exitstatus}" unless $?.success?
     end
+  end
 
-    raise "gem install #{name} failed with status #{$?.exitstatus}" unless $?.success?
-
-    bin.rmtree if bin.exist?
-    bin.mkpath
-
-    brew_gem_prefix = prefix + "gems/#{name}-#{version}"
-
-    completion_for_bash = Dir[
-      "#{brew_gem_prefix}/completion{s,}/#{name}.{bash,sh}",
-      "#{brew_gem_prefix}/**/#{name}{_,-}completion{s,}.{bash,sh}"
-    ].first
-
-    bash_completion.install completion_for_bash if completion_for_bash
-
-    completion_for_zsh = Dir[
-      "#{brew_gem_prefix}/completions/#{name}.zsh",
-      "#{brew_gem_prefix}/**/#{name}{_,-}completion{s,}.zsh"
-    ].first
-
-    zsh_completion.install completion_for_zsh if completion_for_zsh
-
-    ruby_libs = Dir.glob("#{prefix}/gems/*/lib")
-
+  # Create the binary executable entry points for all executables included with the Tinker gem.
+  def create_bin_entrypoints
     metadata.executables.each do |exe|
-      file = Pathname.new("#{brew_gem_prefix}/#{metadata.bindir}/#{exe}")
+      file = Pathname.new("#{gem_path}/#{metadata.bindir}/#{exe}")
       (bin + file.basename).open('w') do |f|
         f << <<~RUBY
-          #!#{ruby_bin} --disable-gems
-          ENV['GEM_HOME']="#{prefix}"
-          ENV['GEM_PATH']="#{prefix}"
+          #!#{ruby_path}/bin/ruby --disable-gems
+          #{tinker_env_vars.map { |k, v| "ENV['#{k}'] = \"#{v}\"" }.join("\n")}
           require 'rubygems'
-          $:.unshift(#{ruby_libs.map(&:inspect).join(',')})
+          $:.unshift(#{installed_gem_lib_paths.map(&:inspect).join(',')})
           load "#{file}"
         RUBY
       end
     end
   end
 
+  def install
+    setup_debug_tools if Context.current.debug?
+
+    bin.rmtree if bin.exist?
+    bin.mkpath
+
+    log_path = if OS.mac?
+      "#{user_home}/Library/Logs/Homebrew/tinker"
+    elsif OS.linux?
+      "#{user_home}/.cache/Homebrew/Logs/tinker"
+    end
+
+    ohai("Installing dedicated version of Ruby #{ruby_version}. This will take several minutes.")
+    ohai("For detailed progress information, run the following in a new CLI:")
+    ohai("  tail -f #{log_path}/01.rvm")
+    install_ruby
+
+    ohai("Installing ruby gem for #{name} #{version}.")
+    ohai("For detailed progress information, run the following in a new CLI:")
+    ohai("  tail -f #{log_path}/02.gem")
+    install_tinker_gem
+
+    ohai('Creating Tinker bin entrypoints.')
+    create_bin_entrypoints
+  end
+
   test do
-    assert_match TINKER_VERSION, shell_output("TINKER_ENV=production tinker --version")
+    assert_match TINKER_VERSION, shell_output("tinker --version")
   end
 end

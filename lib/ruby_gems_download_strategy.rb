@@ -1,9 +1,13 @@
 # frozen_string_literal: true
 
+require_relative './debug_tools'
+
 require 'yaml'
 require 'download_strategy'
 
 class RubyGemsDownloadStrategy < AbstractDownloadStrategy
+  include DebugTools
+
   class << self
     def gem_config
       {
@@ -36,21 +40,22 @@ class RubyGemsDownloadStrategy < AbstractDownloadStrategy
     cached_location.unlink if cached_location.exist?
   end
 
-  def setup_debug_tools
-    Homebrew.install_gem_setup_path! 'pry'
-    Homebrew.install_gem_setup_path! 'pry-byebug', executable: 'pry'
-    require 'pry-byebug'
+  def run_as_user(command_string)
+    system(*shell_cmd(command_string))
+  end
+
+  def shell_cmd(command_string)
+    [ENV['SHELL'], '--login', '-c', command_string]
   end
 
   def fetch
-    Homebrew.setup_gem_environment!
-    ohai "Fetching #{name} from gem source"
+    ohai("Fetching #{name} gem from GitHub packages.")
     setup_debug_tools if Context.current.debug?
 
     clear_cache
     RubyGemsDownloadStrategy.gem_config_file do |config_path|
       HOMEBREW_CACHE.cd do
-        system('gem', 'fetch', name, '--version', version, '--config-file', config_path)
+        run_as_user("gem fetch #{name} --version #{version} --config-file #{config_path}")
       end
     end
   end
