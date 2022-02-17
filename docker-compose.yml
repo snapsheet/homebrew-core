@@ -7,3 +7,4 @@ services:
       HOMEBREW_GITHUB_API_TOKEN: $GITHUB_TOKEN
     volumes:
       - ./:/home/dev.user/homebrew-core
+      - ~/.aws:/home/dev.user/.aws
