@@ -4,8 +4,8 @@ require_relative "../lib/sail/private_strategy"
 class Sail < Formula
   desc "Lighting-fast cli middleware for Docker containers"
   homepage "https://github.com/bodyshopbidsdotcom/sail"
-  url "https://github.com/bodyshopbidsdotcom/sail/releases/download/v1.0.0/sail-1.0.0.tar.gz", :using => GitHubPrivateRepositoryReleaseDownloadStrategy
-  sha256 "50f22d0c6391ef18ecfa782a1316ba43df99c4fcfb079b4d65a328af569b95c1"
+  url "https://github.com/bodyshopbidsdotcom/sail/releases/download/v1.0.1/sail-1.0.1.tar.gz", :using => GitHubPrivateRepositoryReleaseDownloadStrategy
+  sha256 "464c3ccaba19772dad74c6d59a8282a2c6446253a3541909f85581666a12ee58"
   license "MIT"
 
   depends_on "jq"
