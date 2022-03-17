@@ -11,6 +11,12 @@ class SessionManagerPlugin < Formula
         verified: 's3.amazonaws.com/session-manager-downloads/'
   end
 
+  on_linux do
+    sha256 '12bcbec7d394275c2085d610fdbd53171c9083b3abf332d90baf3bcc3e730d2c'
+    url "https://s3.amazonaws.com/session-manager-downloads/plugin/#{version}/ubuntu_64bit/session-manager-plugin.deb",
+        verified: 's3.amazonaws.com/session-manager-downloads/'
+  end
+
   livecheck do
     url :homepage
     regex(%r{<td>\s*v?(\d+(?:\.\d+)+)\s*</td>}i)
@@ -20,7 +26,14 @@ class SessionManagerPlugin < Formula
     on_macos do
       system 'tar', 'xvf', 'session-manager-plugin.pkg'
       system 'tar', 'xvf', 'Payload'
-      prefix.install Dir['./usr/local/sessionmanagerplugin/*']
     end
+
+    on_linux do
+      system 'ar', 'vx', 'session-manager-plugin.deb'
+      system 'tar', 'xvf', 'control.tar.gz'
+      system 'tar', 'xvf', 'data.tar.gz'
+    end
+
+    prefix.install Dir['./usr/local/sessionmanagerplugin/*']
   end
 end
