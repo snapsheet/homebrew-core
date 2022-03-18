@@ -1,5 +1,6 @@
 # A clone of https://github.com/Homebrew/homebrew-cask/blob/HEAD/Casks/session-manager-plugin.rb
-# implemented here so it can be used as a dependency.
+# implemented here so it can be used as a dependency for other Formulae.
+# This formula only installs the client.
 class SessionManagerPlugin < Formula
   version '1.2.295.0'
   desc 'Plugin for AWS CLI to start and end sessions that connect to managed instances'
