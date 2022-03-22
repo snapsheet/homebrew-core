@@ -23,7 +23,27 @@ class SessionManagerPlugin < Formula
     regex(%r{<td>\s*v?(\d+(?:\.\d+)+)\s*</td>}i)
   end
 
+  def plugin_path
+    '/usr/local/sessionmanagerplugin'
+  end
+
+  def symlink_path
+    '/usr/local/bin/session-manager-plugin'
+  end
+
+  def fail_if_already_installed
+    if Dir.exist?(self.plugin_path) || File.exist?(self.symlink_path)
+      error_message = [
+        "Existing installation found in #{self.plugin_path}. Run the following and try the installation again:",
+        "  sudo rm -rf #{self.plugin_path} #{self.symlink_path}"
+      ]
+      odie(error_message.join("\n"))
+    end
+  end
+
   def install
+    self.fail_if_already_installed
+
     on_macos do
       system 'tar', 'xvf', 'session-manager-plugin.pkg'
       system 'tar', 'xvf', 'Payload'
@@ -35,6 +55,6 @@ class SessionManagerPlugin < Formula
       system 'tar', 'xvf', 'data.tar.gz'
     end
 
-    prefix.install Dir['./usr/local/sessionmanagerplugin/*']
+    prefix.install Dir[".#{self.plugin_path}/*"]
   end
 end
