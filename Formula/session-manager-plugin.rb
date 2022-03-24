@@ -1,8 +1,9 @@
 # A clone of https://github.com/Homebrew/homebrew-cask/blob/HEAD/Casks/session-manager-plugin.rb
 # implemented here so it can be used as a dependency for other Formulae.
 # This formula only installs the client.
+SESSION_MANAGER_PLUGIN_VERSION = '1.2.295.0'
 class SessionManagerPlugin < Formula
-  version '1.2.295.0'
+  version SESSION_MANAGER_PLUGIN_VERSION
   desc 'Plugin for AWS CLI to start and end sessions that connect to managed instances'
   homepage 'https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html'
 
@@ -56,5 +57,9 @@ class SessionManagerPlugin < Formula
     end
 
     prefix.install Dir[".#{self.plugin_path}/*"]
+  end
+
+  test do
+    assert_match SESSION_MANAGER_PLUGIN_VERSION, shell_output('session-manager-plugin --version').strip
   end
 end
