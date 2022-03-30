@@ -35,6 +35,7 @@ class Tinker < Formula
   
   # Runtime dependencies that will be used by Tinker.
   depends_on "awscli" => "2"
+  depends_on "snapsheet/core/session-manager-plugin" => "1.2.295"
 
   # Get the system home directory for the user installing Tinker. Attempting to find the home via
   # +path = `echo $HOME`+ will return the temporary path used while running this formula (same as
