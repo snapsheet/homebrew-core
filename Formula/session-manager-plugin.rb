@@ -8,12 +8,12 @@ class SessionManagerPlugin < Formula
   homepage 'https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html'
 
   on_macos do
-    sha256 'dad3eb15607c675d20ddc8a4b199c46d458b70ed6188afb7c83fb1a1d7a44911'
-    url "https://s3.amazonaws.com/session-manager-downloads/plugin/#{version}/mac/session-manager-plugin.pkg",
+    sha256 'acec1d7dcddb81c6eb1bd29eb137609e9bb2421196f27b1aa3a800fc48277da2'
+    url "https://s3.amazonaws.com/session-manager-downloads/plugin/#{version}/mac/sessionmanager-bundle.zip",
         verified: 's3.amazonaws.com/session-manager-downloads/'
   end
 
-  on_linux do
+  on_linux do 
     sha256 '12bcbec7d394275c2085d610fdbd53171c9083b3abf332d90baf3bcc3e730d2c'
     url "https://s3.amazonaws.com/session-manager-downloads/plugin/#{version}/ubuntu_64bit/session-manager-plugin.deb",
         verified: 's3.amazonaws.com/session-manager-downloads/'
@@ -46,8 +46,8 @@ class SessionManagerPlugin < Formula
     self.fail_if_already_installed
 
     on_macos do
-      system 'tar', 'xvf', 'session-manager-plugin.pkg'
-      system 'tar', 'xvf', 'Payload'
+      bin.install "bin/session-manager-plugin"
+      prefix.install %w[LICENSE VERSION]
     end
 
     on_linux do
