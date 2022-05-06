@@ -32,6 +32,9 @@ class Tinker < Formula
   depends_on "pkg-config" => :build
   depends_on "readline" => :build
   depends_on "zlib" => :build
+
+  # Build dependencies that will be used by Rugged
+  depends_on "cmake" => :build
   
   # Runtime dependencies that will be used by Tinker.
   depends_on "awscli" => "2"
