@@ -3,62 +3,40 @@ This is a Homebrew tap for useful formulae used by engineers at Snapsheet.
 
 * [Explanation of how Homebrew works](https://www.quora.com/How-does-Homebrew-work-internally?share=1)
 
-## Installation
-These packages require a GitHub token to be set up in your environment with the name `HOMEBREW_GITHUB_API_TOKEN`.
-
-For the following, replace `<formula>` with the name of the package you are trying to install.
-
-You can add this to your shell profile, or prefix it to the brew commands.
+## Installing Formulae via Homebrew
+Packages installed by these formulae require an environment variable with the GitHub token to be present with the name `HOMEBREW_GITHUB_API_TOKEN`. If you already use the Github API for your projects, this can be the same as your `GITHUB_TOKEN`. Add the following to your `.profile`/`.bashrc`/`.zshrc` file, where `xxxxx` represents your token. This will ensure that you are authenticated when installing a Snapsheet formula or updating a Snapsheet formula via Homebrew.
 ```
-HOMEBREW_GITHUB_API_TOKEN=xxxxx brew ...
+export HOMEBREW_GITHUB_API_TOKEN=xxxxx
 ```
 
-Install a specific formula from this repository:
-```
-brew install snapsheet/core/<formula>
-```
+Homebrew will install formulas based on the naming convention of this repository and the ruby scripts found in the `Formula/` directory. If you want to run the installer for `Formula/tinker.rb`, then you would run `brew install snapsheet/core/tinker`.
 
-Install the repository and then formula by name:
-```
-brew tap snapsheet/core
-brew install <formula>
-```
+It's possible to install `snapsheet/core` as a tap, but not recommended. This will cause confusion if the names of one of these formula collides with a formula in [Homebrew's default list](https://github.com/Homebrew/homebrew-core).
 
-## Testing
-
-This project uses [docker compose](https://docs.docker.com/compose/) to create a development environment you can use for testing purposes.
-
-Build the development environments:
-```
-docker-compose build
-```
-
-This creates one service with RVM and installed ruby versions.
-
-Image has a user `dev.user` that mimics the profile formulae will be installed under. To open a shell as this user, run the following:
-```
-docker-compose run --rm cli
-```
-
-After this, you should be able to run the following commands.
-
-### Validation
+## Validation
 To validate that the package will work on your system, install the repository and run the following:
 ```
 brew test <formula>
 ```
 
-### Locally/Development
-To test locally, install the formula from source. Clone this repository and `cd` to it from a CLI terminal.
-
-Run The following to install a formula locally:
+## Development
+To install from a formula in a local ruby script, run installation with `--build-from-source` followed by the path to the ruby script.
 ```
-brew install --debug --build-from-source Formula/<formula>.rb
+brew install --build-from-source Formula/<formula>.rb
 ```
 
-This will reflect any changes you make to the formula in `Formula/<formula>.rb`.
+Adding the `--debug` flag will give you additional debug options if the installation fails.
 
-To run the test case for the formula, you must have first installed locally from source. Then run the following:
+## Testing With Linux
+This project uses [docker compose](https://docs.docker.com/compose/) to create a development environment you can use for testing installations on Linux.
+
 ```
-brew test Formula/<formula>.rb
+docker compose build
 ```
+
+This will create a development Docker image with RVM and a few installed ruby versions. The image will run with a user `dev.user` that mimics the profile formulae will be installed under. To open a bash shell as this user, run the following:
+```
+docker compose run --rm cli
+```
+
+Now you will be able to run any of the previous commands to test formulae on Linux.
