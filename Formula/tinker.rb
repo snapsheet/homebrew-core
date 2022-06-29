@@ -8,7 +8,7 @@ require_relative '../lib/debug_tools'
 require 'net/http'
 require 'uri'
 
-TINKER_VERSION = '0.4.0'.freeze
+TINKER_VERSION = '0.4.1'.freeze
 
 class Tinker < Formula
   include RubyManager
