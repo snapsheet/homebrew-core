@@ -20,12 +20,12 @@ brew test <formula>
 ```
 
 ## Development
-To install from a formula in a local ruby script, run installation with `--build-from-source` followed by the path to the ruby script.
+To install from a formula in a local ruby script, run installation with `--formula` and `--build-from-source` followed by the path to the ruby script.
 ```
-brew install --build-from-source Formula/<formula>.rb
+brew install --formula --build-from-source Formula/<formula>.rb
 ```
 
-Adding the `--debug` flag will give you additional debug options if the installation fails.
+Adding the `--debug` flag will give you additional debug options if the installation fails. For more information, see the [online man page](https://docs.brew.sh/Manpage) or run `brew install help`.
 
 ## Testing With Linux
 This project uses [docker compose](https://docs.docker.com/compose/) to create a development environment you can use for testing installations on Linux.
