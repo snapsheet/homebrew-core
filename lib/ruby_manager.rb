@@ -118,7 +118,7 @@ module RubyManager
     ) do
       system(
         "#{rvm_path}/bin/rvm",
-        '--autolibs=read-fail',
+        '--autolibs=disabled',
         '--with-gcc=gcc',
         '--verbose', '--debug',
         'install', ruby_version
