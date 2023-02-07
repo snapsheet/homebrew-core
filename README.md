@@ -4,7 +4,19 @@ This is a Homebrew tap for useful formulae used by engineers at Snapsheet.
 * [Explanation of how Homebrew works](https://www.quora.com/How-does-Homebrew-work-internally?share=1)
 
 ## Installing Formulae via Homebrew
-Packages installed by these formulae require an environment variable with the GitHub token to be present with the name `HOMEBREW_GITHUB_API_TOKEN`. If you already use the Github API for your projects, this can be the same as your `GITHUB_TOKEN`. Add the following to your `.profile`/`.bashrc`/`.zshrc` file, where `xxxxx` represents your token. This will ensure that you are authenticated when installing a Snapsheet formula or updating a Snapsheet formula via Homebrew.
+Packages installed by these formulae require an environment variable with the GitHub token to be present with the name `HOMEBREW_GITHUB_API_TOKEN`. If you already use the Github API for your projects, this can be the same as your `GITHUB_TOKEN`.
+
+To generate a token that you can use using the GitHub CLI and SSO, run the `gh auth` command:
+```
+gh auth login --scopes read:packages
+```
+
+This will ask you to authenticate through your web browser to create a session in your CLI. Then you can use the `gh` command to get the token:
+```
+HOMEBREW_GITHUB_API_TOKEN=$(gh auth token)
+```
+
+Alternatively, you can generate a token via the GitHub web UI and add this to your `.profile`/`.bashrc`/`.zshrc` file, where `xxxxx` represents your token. This will ensure that you are authenticated when installing a Snapsheet formula or updating a Snapsheet formula via Homebrew.
 ```
 export HOMEBREW_GITHUB_API_TOKEN=xxxxx
 ```
@@ -20,6 +32,16 @@ brew test <formula>
 ```
 
 ## Development
+If your formula also lists dependencies from `snapsheet/core/...`, you may run into an issue where the logic in the dependency will start running over the logic defined locally. To fix this:
+1. Comment out the dependencies
+1. Uninstall them
+1. Untap the `snapsheet/core` tap
+1. Rerun
+```
+brew uninstall session-manager-plugin
+brew untap snapsheet/core
+```
+
 To install from a formula in a local ruby script, run installation with `--formula` and `--build-from-source` followed by the path to the ruby script.
 ```
 brew install --formula --build-from-source Formula/<formula>.rb
