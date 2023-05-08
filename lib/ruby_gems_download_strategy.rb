@@ -48,7 +48,7 @@ class RubyGemsDownloadStrategy < AbstractDownloadStrategy
     [ENV['SHELL'], '--login', '-c', command_string]
   end
 
-  def fetch
+  def fetch(quiet: nil, verify_download_integrity: true, timeout: nil)
     ohai("Fetching #{name} gem from GitHub packages.")
     setup_debug_tools if Context.current.debug?
 
