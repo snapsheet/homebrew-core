@@ -51,11 +51,10 @@ class RubyGemsDownloadStrategy < AbstractDownloadStrategy
   def fetch(quiet: nil, verify_download_integrity: true, timeout: nil)
     ohai("Fetching #{name} gem from GitHub packages.")
     setup_debug_tools if Context.current.debug?
-
     clear_cache
     RubyGemsDownloadStrategy.gem_config_file do |config_path|
       HOMEBREW_CACHE.cd do
-        run_as_user("gem fetch #{name} --version #{version} --config-file #{config_path}")
+        run_as_user("cd #{HOMEBREW_CACHE}; gem fetch #{name} --version #{version} --config-file #{config_path}")
       end
     end
   end
