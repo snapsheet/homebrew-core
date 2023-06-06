@@ -45,7 +45,7 @@ class RubyGemsDownloadStrategy < AbstractDownloadStrategy
   end
 
   def shell_cmd(command_string)
-    [ENV['SHELL'], '--login', '-c', command_string]
+    [ENV['SHELL'], '-c', command_string]
   end
 
   def fetch(quiet: nil, verify_download_integrity: true, timeout: nil)
@@ -55,7 +55,7 @@ class RubyGemsDownloadStrategy < AbstractDownloadStrategy
     clear_cache
     RubyGemsDownloadStrategy.gem_config_file do |config_path|
       HOMEBREW_CACHE.cd do
-        system("gem fetch #{name} --version #{version} --config-file #{config_path}")
+        run_as_user("gem fetch #{name} --version #{version} --config-file #{config_path}")
       end
     end
   end
