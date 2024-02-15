@@ -53,13 +53,18 @@ class Tinker < Formula
   # @return [String] Semantic version of Ruby runtime (+3.0.1+, etc).
   def ruby_version
     @ruby_version ||= metadata.required_ruby_version.to_s.split.last
+    ohai("!!! Method RUBY VERSION PASSED")
   end
 
   # Metadata associated with the Tinker gem. Used to get dependencies, requirements, etc.
   #
   # @return [Object] Reference to metadata object loaded from a gem.
   def metadata
-    @metadata ||= YAML.load(`tar -xOf #{tinker_gem_path} metadata.gz | gzip -dc`)
+    ### This is the line that's causing the 
+    #@metadata ||= YAML.load(`tar -xOf #{tinker_gem_path} metadata.gz | gzip -dc`)
+
+    ## Likely a fix
+    @metadata ||= YAML.safe_load(`tar -xOf #{tinker_gem_path} metadata.gz | gzip -dc`, [Gem::Specification])
   end
 
   # Find the path of the gem that will be installed by this formula.
@@ -117,11 +122,10 @@ class Tinker < Formula
   end
 
   def install
+    
     setup_debug_tools if Context.current.debug?
-
     bin.rmtree if bin.exist?
     bin.mkpath
-
     log_path = if OS.mac?
       "#{user_home}/Library/Logs/Homebrew/tinker"
     elsif OS.linux?
