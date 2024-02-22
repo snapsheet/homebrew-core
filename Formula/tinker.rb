@@ -7,7 +7,6 @@ require_relative '../lib/ruby_manager'
 require_relative '../lib/debug_tools'
 require 'net/http'
 require 'uri'
-
 TINKER_VERSION = '1.0.1'.freeze
 
 class Tinker < Formula
@@ -59,7 +58,7 @@ class Tinker < Formula
   #
   # @return [Object] Reference to metadata object loaded from a gem.
   def metadata
-    @metadata ||= YAML.load(`tar -xOf #{tinker_gem_path} metadata.gz | gzip -dc`)
+    @metadata ||= YAML.load(`tar -xOf #{tinker_gem_path} metadata.gz | gzip -dc`, permitted_classes: [Gem::Specification, Gem::Version, Gem::Dependency, Gem::Requirement, Gem::Platform, Time, Symbol])
   end
 
   # Find the path of the gem that will be installed by this formula.
@@ -117,11 +116,10 @@ class Tinker < Formula
   end
 
   def install
+    
     setup_debug_tools if Context.current.debug?
-
     bin.rmtree if bin.exist?
     bin.mkpath
-
     log_path = if OS.mac?
       "#{user_home}/Library/Logs/Homebrew/tinker"
     elsif OS.linux?
