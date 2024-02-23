@@ -59,7 +59,7 @@ class Tinker < Formula
   #
   # @return [Object] Reference to metadata object loaded from a gem.
   def metadata
-    @metadata ||= YAML.load(`tar -xOf #{tinker_gem_path} metadata.gz | gzip -dc`, permitted_classes: [Gem::Specification, Gem::Version, Gem::Dependency, Gem::Requirement, Gem::Platform, Time, Symbol])
+    @metadata ||= YAML.load(`tar -xOf #{tinker_gem_path} metadata.gz | gzip -dc`, permitted_classes: [Gem::Specification, Gem::Version, Gem::Dependency, Gem::Requirement, Time, Symbol])
   end
 
   # Find the path of the gem that will be installed by this formula.
