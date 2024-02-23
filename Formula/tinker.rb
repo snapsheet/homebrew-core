@@ -7,6 +7,7 @@ require_relative '../lib/ruby_manager'
 require_relative '../lib/debug_tools'
 require 'net/http'
 require 'uri'
+require 'rubygems/package'
 
 TINKER_VERSION = '1.0.1'.freeze
 
@@ -59,7 +60,7 @@ class Tinker < Formula
   #
   # @return [Object] Reference to metadata object loaded from a gem.
   def metadata
-    @metadata ||= YAML.load(`tar -xOf #{tinker_gem_path} metadata.gz | gzip -dc`, permitted_classes: [Gem::Specification, Gem::Version, Gem::Dependency, Gem::Requirement, Time, Symbol])
+    @metadata ||= Gem::Package.new(tinker_gem_path).spec
   end
 
   # Find the path of the gem that will be installed by this formula.
