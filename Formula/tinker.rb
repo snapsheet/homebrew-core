@@ -116,9 +116,9 @@ class Tinker < Formula
     end
   end
 
-  def install    
+  def install
     setup_debug_tools if Context.current.debug?
-    
+
     bin.rmtree if bin.exist?
     bin.mkpath
 
