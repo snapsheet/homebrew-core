@@ -7,6 +7,7 @@ require_relative '../lib/ruby_manager'
 require_relative '../lib/debug_tools'
 require 'net/http'
 require 'uri'
+
 TINKER_VERSION = '1.0.1'.freeze
 
 class Tinker < Formula
@@ -115,11 +116,12 @@ class Tinker < Formula
     end
   end
 
-  def install
-    
+  def install    
     setup_debug_tools if Context.current.debug?
+    
     bin.rmtree if bin.exist?
     bin.mkpath
+
     log_path = if OS.mac?
       "#{user_home}/Library/Logs/Homebrew/tinker"
     elsif OS.linux?
