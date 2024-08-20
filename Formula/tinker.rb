@@ -9,7 +9,7 @@ require 'net/http'
 require 'uri'
 require 'rubygems/package'
 
-TINKER_VERSION = '1.3.5'.freeze
+TINKER_VERSION = '1.3.6'.freeze
 
 class Tinker < Formula
   include RubyManager
@@ -18,7 +18,7 @@ class Tinker < Formula
   desc 'Install the Tinker toolset.'
   homepage 'https://github.com/bodyshopbidsdotcom/tinker'
   url('tinker', using: RubyGemsDownloadStrategy)
-  sha256 '7fd426a7ccd16fdd418e6e7a6c7217ff08e3ba2ccec02e7327da6a340cbac724' # .gem
+  sha256 'fcf118d83ddee74691273cc386ba8ebde819f48a3974084288a77c617d94680e' # .gem
   license 'MIT'
   version TINKER_VERSION
 
